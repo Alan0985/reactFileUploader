@@ -1,8 +1,10 @@
 import React, { Fragment, useState } from "react";
+import axios from "axios";
 
 const FileUpload = () => {
   const [file, setFile] = useState("");
   const [fileName, setFileName] = useState("Choose Fileeeee");
+  const [uploadedFile, setUploadedFile] = useState({});
 
   const chooseFile = (e) => {
     e.preventDefault();
@@ -10,11 +12,32 @@ const FileUpload = () => {
     setFileName(e.target.files[0].name);
   };
 
-  const onSubmitForm = () => {};
+  const submitForm = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await axios.post("/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const { fileName, filePath } = res.data;
+      setUploadedFile({ fileName, filePath });
+    } catch (error) {
+      if (error.response.status === 500) {
+        console.log("Server Error");
+      } else {
+        console.log(error.response.data.msg);
+      }
+    }
+  };
 
   return (
     <Fragment>
-      <form onSubmit={onSubmitForm}>
+      <form onSubmit={submitForm}>
         <div className="custom-file mb-4">
           <input
             type="file"
