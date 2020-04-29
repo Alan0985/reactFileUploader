@@ -1,10 +1,12 @@
 import React, { Fragment, useState } from "react";
+import Message from "./Message";
 import axios from "axios";
 
 const FileUpload = () => {
   const [file, setFile] = useState("");
   const [fileName, setFileName] = useState("Choose Fileeeee");
   const [uploadedFile, setUploadedFile] = useState({});
+  const [message, setMessage] = useState("");
 
   const chooseFile = (e) => {
     e.preventDefault();
@@ -12,8 +14,8 @@ const FileUpload = () => {
     setFileName(e.target.files[0].name);
   };
 
-  const submitForm = async (e) => {
-    e.preventDefault();
+  const submitForm = async (event) => {
+    event.preventDefault();
     const formData = new FormData();
     formData.append("file", file);
 
@@ -26,17 +28,19 @@ const FileUpload = () => {
 
       const { fileName, filePath } = res.data;
       setUploadedFile({ fileName, filePath });
+      setMessage("File Uploaded");
     } catch (error) {
       if (error.response.status === 500) {
-        console.log("Server Error");
+        setMessage("Server Error");
       } else {
-        console.log(error.response.data.msg);
+        setMessage(error.response.data.msg);
       }
     }
   };
 
   return (
     <Fragment>
+      {message ? <Message msg={message} /> : null}
       <form onSubmit={submitForm}>
         <div className="custom-file mb-4">
           <input
@@ -56,6 +60,19 @@ const FileUpload = () => {
           className="btn btn-primary btn-block mt-2"
         />
       </form>
+
+      {uploadedFile ? (
+        <div className="row mt-5">
+          <div className="col-md-6 m-auto">
+            <h3 className="text-center">{uploadedFile.fileName}</h3>
+            <img
+              style={{ width: "100%" }}
+              src={uploadedFile.filePath}
+              alt={uploadedFile.fileName}
+            />
+          </div>
+        </div>
+      ) : null}
     </Fragment>
   );
 };
