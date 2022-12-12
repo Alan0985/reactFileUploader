@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/Alan0985/reactFileUploader#readme",
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-fileupload": "^1.1.7-alpha.3"
   },
   "devDependencies": {
